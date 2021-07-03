@@ -69,18 +69,55 @@ Route::post('/relatorio', function(Illuminate\Http\Request $request){
         session()->now('obrigatorio', 1);
         return view('filtrorelatorio');
     }
+    
+    if($request->get('dtinicio') == '' && $request->get('dtfim') == '' && $request->get('cliente') == ''){
+        $result = $cadastro->get();
+    }else{
+        $result = $cadastro::where($condicoes)->get();
+    }
  
-    $result = $cadastro::where($condicoes)->get();
 
     foreach($result as $r){
 
         $dias = date_diff(date_create_from_format('Y-m-d',$r['dt_fim']),date_create_from_format('Y-m-d',$r['dt_inicio']));
-        var_dump($dias);
-        die($dias['days']);
+        if($dias->days == 0){
+            $dias->days = 1;
+        }
 
+        $valor_inv_total = $dias->days * $r['invest_diario'];
+        $valor_inv_formatado = 'R$' . number_format($valor_inv_total, 2, ',', '.');
+
+        $cliques   = ($valor_inv_total/100) * 12;
+
+        //compartilhamento do anuncio original
+        $comp_orig = ($cliques / 20) * 3;
+
+        //visualizacao do anuncio original
+        $vis_orig  = $comp_orig * 40;
+
+        //compartilhamento em cadeia (4x)
+        $comp_sec  = $comp_orig * 4;
+
+        //visualização do anuncio com base no compartilhamento em cadeia
+        $vis_sec   = $comp_sec * 40;
+
+        //total das visualizações
+        $total_vis = $vis_orig + $vis_sec;
+
+        //total compartilhamentos
+        $total_comp = $comp_orig + $comp_sec;
+
+        //incluindo no array que tras as informações da base de dados
+        $dados = array('total_vis' => $total_vis, 'total_cliques' => $cliques, 'total_comp' => $total_comp);
+
+        //totalizadores
+        $r['total_vis'] = $total_vis;
+        $r['total_cliques'] = $cliques;
+        $r['total_comp'] = $total_comp;
+        $r['valor_inv_formatado'] = $valor_inv_formatado;
+        $res[] = $r;
 
     }
-
     return view('resultrelatorio')->with('results', $result);
  
 })->name('relatorio');

@@ -22,14 +22,15 @@
     <hr />
  
     <div class="form-group">
+        <a href="{{ route('home') }}"> Home</a>  
         @foreach ( $results as $r )
 
         <p class="form-control">
           Cliente:  {{ $r->cliente }}<br>
-          Valor Total Investido : {{ $r->periodo }}<br>
-          Quantidade Máxima de Visualizações : Teste<br>
-          Quantidade Máxima de Cliques : Teste<br>
-          Quantidade Máxima de Compartilhamentos : Teste<br>
+          Valor Total Investido : {{ $r->valor_inv_formatado }}<br>
+          Quantidade Máxima de Visualizações : {{ $r->total_vis }}<br>
+          Quantidade Máxima de Cliques : {{ $r->total_cliques }}<br>
+          Quantidade Máxima de Compartilhamentos : {{ $r->total_comp }}<br>
         </p>
         
         @endforeach        
