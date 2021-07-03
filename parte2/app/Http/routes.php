@@ -81,10 +81,12 @@ Route::post('/relatorio', function(Illuminate\Http\Request $request){
 
         $dias = date_diff(date_create_from_format('Y-m-d',$r['dt_fim']),date_create_from_format('Y-m-d',$r['dt_inicio']));
         if($dias->days == 0){
-            $dias->days = 1;
+            $total_dias =  1;
+        }else{
+            $total_dias = $dias->days;
         }
 
-        $valor_inv_total = $dias->days * $r['invest_diario'];
+        $valor_inv_total = $total_dias * $r['invest_diario'];
         $valor_inv_formatado = 'R$' . number_format($valor_inv_total, 2, ',', '.');
 
         $cliques   = ($valor_inv_total/100) * 12;
